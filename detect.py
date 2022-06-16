@@ -146,6 +146,21 @@ def run(
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
             annotator = Annotator(im0, line_width=line_thickness, example=str(names))
+
+            print("coordinates: ")
+            print(det[:,:4])
+            width = xyxy2xywh(det[:,:4])[:,2]
+            height =  xyxy2xywh(det[:, :4])[:, 3]
+            # for i in range(len(width)):
+            #     if width[i] >
+            print("width: ")
+            print(width)
+            print("height: ")
+            print(height)
+
+
+
+
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
@@ -157,6 +172,8 @@ def run(
 
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
+
+
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format

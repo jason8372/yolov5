@@ -825,10 +825,19 @@ def non_max_suppression(prediction,
             continue
 
         # Compute conf
+
+
         x[:, 5:] *= x[:, 4:5]  # conf = obj_conf * cls_conf
+
+        #filter out objects that has width * height < 10000
+        size_threshold = 10000
+        x[:, 5:] *= x[:, 4:5]  # conf = obj_conf * cls_conf
+        mask = (x[:, 2] * x[:, 3] > size_threshold)  # (width * height)
+        x = x[mask,:] # mask out the small objects
 
         # Box (center x, center y, width, height) to (x1, y1, x2, y2)
         box = xywh2xyxy(x[:, :4])
+
 
         # Detections matrix nx6 (xyxy, conf, cls)
         if multi_label:
